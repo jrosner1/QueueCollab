@@ -4,7 +4,6 @@ from flask_restful import Api, Resource
 from firebase_admin import credentials, initialize_app, db
 from resources.User import User
 
-# User management helpful link https://betterprogramming.pub/user-management-with-firebase-and-python-749a7a87b2b6
 # Helpful query guide for firebase https://firebase.google.com/docs/database/admin/retrieve-data#python_3
 
 app = Flask(__name__)
