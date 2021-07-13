@@ -21,6 +21,27 @@ class Firebase {
   doSignInWithEmailAndPassword = (email, password) =>
     this.auth.signInWithEmailAndPassword(email, password);
 
+  doSignUpWithEmailAndPassword = async (email, password, phoneNumber, userName) => {
+    return await fetch('http://127.0.0.1:5000/User', {
+      method: 'POST',
+      mode:'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "email": email,
+        "password": password,
+        "phone_number": phoneNumber,
+        "display_name": userName
+      })
+
+    }
+
+    )
+
+
+  }
+
   doSignOut = () => this.auth.sighOut();
 
   doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
