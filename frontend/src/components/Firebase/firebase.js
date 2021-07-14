@@ -22,11 +22,10 @@ class Firebase {
     this.auth.signInWithEmailAndPassword(email, password);
 
   doSignUpWithEmailAndPassword = async (email, password, phoneNumber, userName) => {
-    return await fetch('http://127.0.0.1:5000/User', {
+    return fetch('http://127.0.0.1:5000/User', {
       method: 'POST',
-      mode:'cors',
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         "email": email,
@@ -34,15 +33,13 @@ class Firebase {
         "phone_number": phoneNumber,
         "display_name": userName
       })
-
     }
-
     )
 
 
   }
 
-  doSignOut = () => this.auth.sighOut();
+  doSignOut = () => this.auth.signOut();
 
   doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 

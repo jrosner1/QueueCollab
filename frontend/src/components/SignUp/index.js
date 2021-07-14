@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import {withFirebase} from '../Firebase';
 
@@ -22,17 +22,23 @@ function SignUpFormBase(props){
 
     const onSubmit = async event => {
         event.preventDefault();
-        //TODO make the sign up user function that calls from my API
-        
         props.firebase
             .doSignUpWithEmailAndPassword(email, passwordOne, phoneNumber, userName)
-            .then(token => {
+            .then(function(response) {
+                if(!response.ok) {
+                    throw Error(response.statusText)
+                }else{
+                    props.firebase.doSignInWithEmailAndPassword(email, passwordOne)
+                        .then(props.history.push(ROUTES.HOME))
+                        .catch(setError(error))
+                }
+                return response;
+            }).then(function(response) {
                 
-            })
-            .catch(error => {
-                setError({error})
-            })
-        
+            }).catch(function(error){
+                setError(error)
+                console.log(error);
+            });
         return null;
     }
 
@@ -78,6 +84,7 @@ const SignUpLink = () => (
     </p>
 );
 
-const SignUpForm = withFirebase(SignUpFormBase)
+const SignUpForm = withRouter(withFirebase(SignUpFormBase))
+
 export default SignUp;
 export {SignUpForm, SignUpLink};

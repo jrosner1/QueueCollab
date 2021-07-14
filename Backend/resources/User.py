@@ -24,21 +24,19 @@ class User(Resource):
             user = schema.load(request.json)
             user = user.save_to_db()
             token = generate_token(user.uid)
-            response = make_response(
-                jsonify(
+            '''
+            response = jsonify(
                     {"msg": "User created successfully", "token":token.decode()}
                 ),
-                201
-            )
-            response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000/signup'
-            return response
+                '''
+            return {"msg":"User created successfully", "token":token.decode()}, 200
 
         except ValidationError as err:
-            print(err.messages)
-            return err.messages, 400
+            return {"msg":err.messages}, 400
         except TypeError as err:
-            print(err)
             return {"msg": "Missing information to create the user"}, 400
+        except:
+            return {"msg": "Other error"}, 400
         
 
 
