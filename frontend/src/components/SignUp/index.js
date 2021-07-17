@@ -29,12 +29,12 @@ function SignUpFormBase(props){
                     throw Error(response.statusText)
                 }else{
                     props.firebase.doSignInWithEmailAndPassword(email, passwordOne)
-                        .then(props.history.push(ROUTES.HOME))
-                        .catch(setError(error))
+                    .then(() => {
+                        props.history.push(ROUTES.HOME);
+                    })
+                    .catch(setError(error))
                 }
                 return response;
-            }).then(function(response) {
-                
             }).catch(function(error){
                 setError(error)
                 console.log(error);

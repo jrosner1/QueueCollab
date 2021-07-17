@@ -1,4 +1,5 @@
 import app from 'firebase/app';
+import React, {useState} from 'react'
 import 'firebase/auth';
 //TODO: make these values environment variabels
 const config = {
@@ -16,6 +17,27 @@ class Firebase {
     app.initializeApp(config);
     this.auth = app.auth();
   }
+  useAuth = () => {
+    const [state, setState] = useState(() => {
+        const user = this.auth.currentUser
+        return {
+            initializing: !user,
+            user,
+        }
+    })
+
+    function onChange(user) {
+        setState({initializing: false, user})
+    }
+
+    React.useEffect(() => {
+        const unsubscribe = this.auth.onAuthStateChanged(onChange)
+
+        return () => unsubscribe();
+    }, [])
+
+    return state
+}
 
   // *** Auth API ***
   doSignInWithEmailAndPassword = (email, password) =>
