@@ -1,6 +1,6 @@
 import app from 'firebase/app';
-import React, {useState} from 'react'
 import 'firebase/auth';
+import 'firebase/database';
 //TODO: make these values environment variabels
 const config = {
     apiKey: "AIzaSyCl5vY6t4dhJ4iB-eR8i0IYhGdOMOl5B8o",
@@ -16,28 +16,8 @@ class Firebase {
   constructor() {
     app.initializeApp(config);
     this.auth = app.auth();
+    this.db = app.database();
   }
-  useAuth = () => {
-    const [state, setState] = useState(() => {
-        const user = this.auth.currentUser
-        return {
-            initializing: !user,
-            user,
-        }
-    })
-
-    function onChange(user) {
-        setState({initializing: false, user})
-    }
-
-    React.useEffect(() => {
-        const unsubscribe = this.auth.onAuthStateChanged(onChange)
-
-        return () => unsubscribe();
-    }, [])
-
-    return state
-}
 
   // *** Auth API ***
   doSignInWithEmailAndPassword = (email, password) =>
@@ -66,6 +46,10 @@ class Firebase {
   doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 
   doPasswordUpdate = password => this.auth.currentUser.updatePassword(password);
+
+  // *** User API
+  user = uid => this.db.ref(`users/${uid}`);
+  users = () => this.db.ref('users');
 
 }
 

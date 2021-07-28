@@ -2,7 +2,6 @@ import React from 'react'
 import { BrowserRouter as Router,
 Route } from 'react-router-dom';
 
-import { AuthUserContext } from '../Session';
 import Navigation from '../Navigation'
 import LandingPage from '../Landing';
 import SignUpPage from '../SignUp';
@@ -11,39 +10,28 @@ import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
-
-
-import { withFirebase } from '../Firebase';
+import Spotify from '../Spotify';
+import { withAuthentication } from '../Session';
 
 import * as ROUTES from '../../constants/routes';
  
-const App = (props) => {
-  const {initializing, user} = props.firebase.useAuth()
+const App = () => (
+  <Router>
+    <div>
+      <Navigation/> 
 
-  if(initializing) {
-    return <div>Loading</div>
-  }
+      <hr />
+      <Route exact path ={ROUTES.LANDING} component={LandingPage} />
+      <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
+      <Route path={ROUTES.SIGN_IN} component={SignInPage} />
+      <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
+      <Route path={ROUTES.HOME} component={HomePage} />
+      <Route path={ROUTES.ACCOUNT} component={AccountPage} />
+      <Route path={ROUTES.ADMIN} component={AdminPage} />
+      <Route path={ROUTES.SPOTIFY} component={Spotify} />
 
-  return (
-    <AuthUserContext.Provider value={user}>
-      <Router>
-        <div>
-          <Navigation authUser={user}/> 
-
-          <hr />
-          <Route exact path ={ROUTES.LANDING} component={LandingPage} />
-          <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-          <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-          <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
-          <Route path={ROUTES.HOME} component={HomePage} />
-          <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-          <Route path={ROUTES.ADMIN} component={AdminPage} />
-
-        </div>
-      </Router>
-    </AuthUserContext.Provider>
-  );
-  
-}
+    </div>
+  </Router>
+);
  
-export default withFirebase(App);
+export default withAuthentication(App);

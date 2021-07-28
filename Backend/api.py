@@ -1,15 +1,26 @@
 import firebase_admin
-from flask import Flask
-from flask_cors import CORS
+import os
+from flask import Flask, session
+from flask_session import Session
 from flask_restful import Api
 from firebase_admin import credentials, initialize_app, db
-from resources.User import User
+from resources.Spotify import Spotify
+from resources.User import User 
+
 
 app = Flask(__name__)
-#CORS(app, support_credentials=True)
+
+app.config['SECRET_KEY'] = os.urandom(64)
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = './/flask_session/'
+Session(app)
 api = Api(app)
 
-app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+#Don't think that I will need this setting, 
+# but I will keep it commented just in case the following cors method needs this for some reason.
+#app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.after_request
 def after_request(response):
@@ -29,7 +40,12 @@ db = db.reference("/")
 
 
 
-api.add_resource(User, '/User')
+
+
+
+
+api.add_resource(User, '/User/')
+api.add_resource(Spotify, '/Spotify/')
 
 
 if __name__ == '__main__':

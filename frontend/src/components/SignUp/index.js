@@ -28,13 +28,19 @@ function SignUpFormBase(props){
                 if(!response.ok) {
                     throw Error(response.statusText)
                 }else{
-                    props.firebase.doSignInWithEmailAndPassword(email, passwordOne)
-                    .then(() => {
-                        props.history.push(ROUTES.HOME);
-                    })
-                    .catch(setError(error))
-                }
-                return response;
+                    props.firebase
+                        .doSignInWithEmailAndPassword(email, passwordOne)
+                        .then(authUser => {
+                            return props.firebase
+                                .user(authUser.user.uid)
+                                .set({
+                                    userName,
+                                    email,
+                                });  
+                        })
+                        .then(() => props.history.push(ROUTES.HOME))
+                        .catch(setError(error))
+                    }
             }).catch(function(error){
                 setError(error)
                 console.log(error);
