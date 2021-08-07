@@ -2,26 +2,43 @@ import React, { useEffect, useState } from 'react'
 import { withAuthorization } from '../Session';
 
 const Spotify = () => {
-    const [signInLink, setSignInLink] = useState('')
+    const [url, setUrl] = useState('')
 
 
     useEffect(() => {
-        fetch('http://127.0.0.1:5000/Spotify', {method: 'GET'})
-            .then(response => response.json())
-            .then(
-                data => {
-                    setSignInLink(data["link_url"])
+        var urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has("code") && urlParams.has("state")){
+            //This means the page is being called back to by the spotify login, so now we pass the code and state to backend
+            fetch('/callback/', {
+                method: 'post',
+                credentials:'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: {
+                    "code":urlParams.get("code"),
+                    "state":urlParams.get("state")
                 }
-            )
-    }
-    , [])
+            })
+        }else {
+            fetch('/Spotify/', {
+                credentials:'include',
+            })
+            .then(response => response.json())
+            .then(data => setUrl(data['url']))
+        }
+    }, [])
+
+
     
     
 
+
     return (
-        <div>
-            <a href={signInLink}>Connect To Spotify</a>
+        <div>    
+            <a href={url}>Connect To Spotify</a>
         </div>
+    
     );
 }
 

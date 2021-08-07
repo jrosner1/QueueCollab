@@ -1,8 +1,9 @@
-from flask import jsonify, request, make_response
-from flask_restful import Resource
-from common.firebase_util import generate_token
+from flask import request
+from flask.json import jsonify
+from api import app
 from marshmallow import Schema, fields, post_load, ValidationError
 from Models import UserModel
+
 
 class UserSchema(Schema):
     display_name = fields.Str()
@@ -17,26 +18,27 @@ class UserSchema(Schema):
         return UserModel(**data)
 
 
-class User(Resource):
-    def post(self):
-        try:
-            schema = UserSchema()
-            user = schema.load(request.json)
-            user = user.save_to_db()
-            token = generate_token(user.uid)
-            '''
-            response = jsonify(
-                    {"msg": "User created successfully", "token":token.decode()}
-                ),
-                '''
-            return {"msg":"User created successfully", "token":token.decode()}, 200
+@app.route('/User', methods=['GET', 'POST'])
+def post():
+    try:
+        schema = UserSchema()
+        user = schema.load(request.json)
+        user = user.save_to_db()
 
-        except ValidationError as err:
-            return {"msg":err.messages}, 400
-        except TypeError as err:
-            return {"msg": "Missing information to create the user"}, 400
-        except:
-            return {"msg": "Other error"}, 400
+        response = jsonify(
+                {"msg": "User created successfully"}
+            )
+        response.headers.add('Access-Control-Allow-Headers',
+                         "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+        
+        return response
+
+    except ValidationError as err:
+        return {"msg":err.messages}, 400
+    except TypeError as err:
+        return {"msg": "Missing information to create the user"}, 400
+    except:
+        return {"msg": "Other error"}, 400
         
 
 

@@ -1,15 +1,19 @@
 
-from flask import session, request, redirect
+from flask import session, request, redirect, jsonify
 from flask_restful import Resource
-from urllib.parse import quote
-import spotipy
+import random as rand
+import string
+from common.spotify_util import getUserInformation, getToken
+
+from api import app
 import os
 import uuid
-SCOPE = "user-read-currently-playing playlist-modify-private"
-'''
-SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
-'''
+import urllib
+import time
 
+SCOPE = "user-read-private"
+
+'''
 #Cache logic follows in order to create sessions for spotify
 caches_folder = '../.spotify_caches/'
 if not os.path.exists(caches_folder):
@@ -19,29 +23,81 @@ if not os.path.exists(caches_folder):
 def session_cache_path():
     return caches_folder + session.get('uuid')
 
+'''
+AUTHORIZE_URL = 'https://accounts.spotify.com/authorize?'
+def create_state_key(size):
+	#https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
+	return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
-class Spotify(Resource):
-    def get(self):
-        if not session.get('uuid'):
-            #Visitor is unknown
-            session['uuid'] = str(uuid.uuid4())
-        cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path())
-        auth_manager = spotipy.oauth2.SpotifyOAuth(scope=SCOPE, cache_handler=cache_handler, show_dialog=True)
 
-        if request.args.get("code"):
-            auth_manager.get_access_token(request.args.get("code"))
-            print("here")
-            return redirect('/')
-        if not auth_manager.validate_token(cache_handler.get_cached_token()):
-            #Display sign in link when den't see a token
-            auth_url = auth_manager.get_authorize_url()
-            print("over here")
-            return {"link_url":f"{auth_url}"}
 
-        #Now we are signed in, desplay data
-        spotify = spotipy.Spotify(auth_manager=auth_manager)
-        print("over over here")
-        return {"user":f'{spotify.me()["display_name"]}'}
+@app.route('/Spotify/', methods=["GET", 'POST'])
+def authorize():
+    if 'CLIENT_ID' in os.environ:
+        client_id = os.environ['CLIENT_ID']
+    else:
+        return "error, CLIENT_ID not set", 404
+    if 'REDIRECT_URI' in os.environ:
+        redirect_uri = os.environ['REDIRECT_URI']
+
+    else:
+        return "error, REDIRECT_URI not set", 404
+    scope = SCOPE
+
+    state_key = create_state_key(15)
+    session['state_key'] = state_key
+    print(session['state_key'])
+    params = {
+        'client_id' : client_id,
+        'response_type' : 'code',
+        'redirect_uri' : redirect_uri,
+        'scope': scope,
+        'state': state_key
+
+    }
+    params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
+    response = jsonify(
+        {"url":AUTHORIZE_URL+params}
+    )
+    
+    return response
+
+
+
+
+
+@app.route('/callback/', methods=["GET", "POST"])
+def get_tokens():
+    print(request.json['code'])
+    if request.args.get('state') != session['state_key']:
+        #TODO consider returning error template when this sort of thing fails like this example
+        #https://github.com/lucaoh21/Spotify-Discover-2.0/blob/master/routes.py
+        return "error, state failed", 404
+    if request.args.get('error'):
+        return "error, Spotify error when doing initial authorization"
+    else:
+        code = request.args.get('code')
+        session.pop('state_key', None)
+
+        payload = getToken(code)
+        if payload != None:
+            session['token'] = payload[0]
+            session['refresh_token'] = payload[1]
+            session['token_expiration'] = time.time() + payload[2]
+        else:
+            
+            return "error, Error when getting the refresh and session tokens", 404
+        
+    current_user = getUserInformation(session)
+    session['user_id'] = current_user['id']
+    return redirect(session['previous_url'])
+
+
+        
+
+    
+
+    
 
 
         

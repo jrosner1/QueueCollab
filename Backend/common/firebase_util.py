@@ -19,10 +19,6 @@ def create_user(email_input, display_name_input, password_input, phone_number_in
     except Exception as ex:
         raise ex
 
-def generate_token(uid):
-    custom_token =  auth.create_custom_token(uid)
-    return custom_token
-
 
 
 
