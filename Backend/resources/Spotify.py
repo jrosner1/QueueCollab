@@ -68,15 +68,16 @@ def authorize():
 
 @app.route('/callback/', methods=["GET", "POST"])
 def get_tokens():
-    print(request.json['code'])
-    if request.args.get('state') != session['state_key']:
+    if request.json['state'] != session['state_key']:
         #TODO consider returning error template when this sort of thing fails like this example
         #https://github.com/lucaoh21/Spotify-Discover-2.0/blob/master/routes.py
         return "error, state failed", 404
+
     if request.args.get('error'):
+        #TODO let frontend handle this and pass the error back here
         return "error, Spotify error when doing initial authorization"
     else:
-        code = request.args.get('code')
+        code = request.json['code']
         session.pop('state_key', None)
 
         payload = getToken(code)
