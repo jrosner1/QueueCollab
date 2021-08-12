@@ -1,6 +1,5 @@
 
 from flask import session, request, redirect, jsonify
-from flask_restful import Resource
 import random as rand
 import string
 from common.spotify_util import getUserInformation, getToken
@@ -91,7 +90,8 @@ def get_tokens():
         
     current_user = getUserInformation(session)
     session['user_id'] = current_user['id']
-    return redirect(session['previous_url'])
+
+    return "Successfully logged in", 200
 
 
         

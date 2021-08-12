@@ -13,10 +13,15 @@ def getUserInformation(session):
 def getToken(code):
     token_url = 'https://accounts.spotify.com/api/token'
     if 'CLIENT_SECRET' in os.environ:
-        authorization = 'Basic ' + base64.b64encode(os.environ['CLIENT_ID'] + ':' + os.environ['CLIENT_SECRET'])
+        authorization_unencoded = os.environ['ClIENT_ID'] + ':' + os.environ['CLIENT_SECRET']
+        authorization_unencoded_bytes = authorization_unencoded.encode('ascii')
+        base_64_bytes = base64.b64encode(authorization_unencoded_bytes)
+        base_64_string = base_64_bytes.decode('ascii')
+
+        authorization = 'Basic ' + base_64_string
         redirect_uri = os.environ['REDIRECT_URI']
 
-        headers = {'Authorization': authorization, 'Accept':'application/json', 'Content-Type': 'application/x-ww-form-urlenoded'}
+        headers = {'Authorization': authorization}
         body = {'code': code, 'redirect_uri': redirect_uri, 'grant_type': 'authorization_code'}
         post_response = requests.post(token_url, headers=headers, data=body)
 
@@ -25,7 +30,7 @@ def getToken(code):
             json = post_response.json()
             return json['access_token'], json['refresh_token'], json['expires_in']
         else:
-            print("response from spotify not okay. Response status: " + post_response.status_code)
+            print("response from spotify not okay." )
             return None
     else:
         print("There is no CLIENT_SECRET")

@@ -19,6 +19,7 @@ def after_request(response):
 '''
 from resources.User import *
 from resources.Spotify import *
+
 # Initialize Firestore DB
 if not firebase_admin._apps:
     cred_obj = credentials.Certificate('cred.json')
