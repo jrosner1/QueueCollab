@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { withAuthorization } from '../Session';
+import SpotifyHome from './spotifyhome';
 
 const Spotify = Component => {
     const [url, setUrl] = useState('')
@@ -37,7 +38,7 @@ const Spotify = Component => {
     }, [])
     return (
         isLoggedIn ? 
-        <h1>Successfully Logged in!</h1>
+        <SpotifyHome />
         :
         (<div>    
             <a href={url}>Connect To Spotify</a>
