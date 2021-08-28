@@ -7,3 +7,5 @@ export const ADMIN = '/admin';
 export const PASSWORD_FORGET = '/pw-forget';
 export const SPOTIFY = '/spotify'
 export const NEW_SESSION = '/spotify/session';
+export const LIBRARY_HOME = '/spotify/library';
+export const LIBRARY_PLAYLIST = '/spotify/playlists';

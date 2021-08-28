@@ -19,6 +19,7 @@ def after_request(response):
 '''
 from resources.User import *
 from resources.Spotify import *
+from resources.Session import *
 
 # Initialize Firestore DB
 if not firebase_admin._apps:
@@ -26,7 +27,7 @@ if not firebase_admin._apps:
     default_app = initialize_app(cred_obj, {
 	    'databaseURL':'https://spotifyparty-a6660-default-rtdb.firebaseio.com/'
 	    })
-db = db.reference("/")
+#db = db.reference("/")
 
 
 if __name__ == '__main__':

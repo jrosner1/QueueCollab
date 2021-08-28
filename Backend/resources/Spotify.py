@@ -12,17 +12,6 @@ import time
 
 SCOPE = "user-read-private"
 
-'''
-#Cache logic follows in order to create sessions for spotify
-caches_folder = '../.spotify_caches/'
-if not os.path.exists(caches_folder):
-    #Ensure cache folder exists
-    os.makedirs(caches_folder)
-
-def session_cache_path():
-    return caches_folder + session.get('uuid')
-
-'''
 AUTHORIZE_URL = 'https://accounts.spotify.com/authorize?'
 def create_state_key(size):
 	#https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
@@ -52,7 +41,6 @@ def authorize():
         'redirect_uri' : redirect_uri,
         'scope': scope,
         'state': state_key
-
     }
     params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
     response = jsonify(
@@ -60,9 +48,6 @@ def authorize():
     )
     
     return response
-
-
-
 
 
 @app.route('/callback/', methods=["GET", "POST"])

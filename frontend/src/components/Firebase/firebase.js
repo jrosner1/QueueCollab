@@ -38,8 +38,6 @@ class Firebase {
       })
     }
     )
-
-
   }
 
   doSignOut = () => this.auth.signOut();
@@ -51,6 +49,12 @@ class Firebase {
   // *** User API
   user = uid => this.db.ref(`users/${uid}`);
   users = () => this.db.ref('users');
+
+
+  // *** Session API
+  songs = sid => this.db.ref(`songs/${sid}`)
+  session = sid => this.db.ref(`sessions/${sid}`)
+  
 
 }
 
