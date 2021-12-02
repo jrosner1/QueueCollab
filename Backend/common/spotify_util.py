@@ -1,6 +1,7 @@
 import base64, requests, os, time
 
 def getUserInformation(session):
+    ''' A function that requests the user information from the Spotify servers.'''
 	url = 'https://api.spotify.com/v1/me'
 	payload = make_get_request(session, url)
 
@@ -11,6 +12,7 @@ def getUserInformation(session):
 
 #Method to get access token, refresh token, and expiry time from spotify
 def getToken(code):
+    ''' A function that gets the access tokens for a user from the Spotify API.'''
     token_url = 'https://accounts.spotify.com/api/token'
     if 'CLIENT_SECRET' in os.environ:
         authorization_unencoded = os.environ['ClIENT_ID'] + ':' + os.environ['CLIENT_SECRET']
@@ -37,6 +39,7 @@ def getToken(code):
         return None
 
 def refresh_tokens(session):
+    '''A function that refreshes the spotify session token.'''
     if time.time() > session['token_expiration']:
         token_url = 'https://accounts.spotify.com/api/token'
         authorization = 'Basic ' + base64.b64encode(os.environ['CLIENT_ID'] + ':' + os.environ['CLIENT_SECRET'])
@@ -53,6 +56,7 @@ def refresh_tokens(session):
 
 
 def make_get_request(session, url, params={}):
+    ''' A function that sends request to the spotify servers for the specified endpoint.'''
     headers = {"Authorization": "Bearer {}".format(session['token'])}
     response = requests.get(url, headers=headers, params=params)
 

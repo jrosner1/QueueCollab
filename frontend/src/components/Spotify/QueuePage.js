@@ -9,6 +9,7 @@ import {
 const QueuePage = (props) => {
     const [loading, setLoading] = useState(false);
     const [sessionName, setSessionName] = useState('')
+    const history = useHistory();
     const [songs, setSongs] = useState([])
     
 
@@ -19,7 +20,8 @@ const QueuePage = (props) => {
             console.log(dataSnapshot.val())
             setSessionName(dataSnapshot.val())
         }, function(error) {
-            console.log(error)
+            localStorage.removeItem('session_code');
+            history.push(ROUTES.SPOTIFY)
         });
         const unsub_children = props.firebase.songs(props.session)
         .on('child_added', (snapshot, prevChildKey) => {
@@ -50,13 +52,12 @@ const Header = ({sessionName}) => {
     const history = useHistory();
     const leaveSession = () => {
         localStorage.removeItem('session_code')
-        window.location.reload(false);
-
+        window.location.reload();
     }
     return (
         <div>
             <h1>{sessionName}</h1>
-            <Link to={ROUTES.LIBRARY_HOME}>Create New Session</Link>
+            <Link to={ROUTES.LIBRARY_HOME}>Add Song to Session</Link>
             <button onClick={leaveSession}>Leave Session</button>
         </div>
     )

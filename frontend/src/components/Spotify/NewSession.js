@@ -40,7 +40,6 @@ const newSession = () => {
         }).then(() => {
             localStorage.setItem('session_code', sessionId)
             history.push(ROUTES.SPOTIFY)
-
         })
         
     }

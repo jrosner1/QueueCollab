@@ -2,12 +2,15 @@ import React, {useState, useEffect} from  'react'
 import * as ROUTES from '../../constants/routes';
 import QueuePage from './QueuePage';
 import {
+    useHistory,
     Link
   } from "react-router-dom";
 
 function SpotifyLanding () {
     const [sessionId, setSessionId] = useState('');
-    const [hasSession, setHasSession] = useState(false)
+    const [hasSession, setHasSession] = useState(false);
+    const [error, setError] = useState(null);
+    const history = useHistory();
 
     useEffect(() => {
         if (localStorage.getItem('session_code')){
@@ -26,6 +29,13 @@ function SpotifyLanding () {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+            }).then(response => {
+                if(response.ok){
+                    localStorage.setItem('session_code', sessionId)
+                    history.push(ROUTES.SPOTIFY)
+                }else{
+                    setError('No session exists with this ID')
+                }
             })
         }
     }
@@ -42,6 +52,7 @@ function SpotifyLanding () {
                 placeholder="Search for a Session..." 
                 onChange = {e => setSessionId(e.target.value) }
                 onKeyDown={handleKeyDown}/>
+            {error && <p>{error}</p>}
             <p>Don't have a Session? Create a new one Here!</p>
             
             <Link to={ROUTES.NEW_SESSION}>Create New Session</Link>

@@ -6,6 +6,7 @@ def get_user_object_from_email(email):
     return user.toJSON()
 
 def create_session(session_model):
+    '''A function that creates a session entry in the firebase'''
     #TODO create some logic for immediate invites to get an email
     try:
         ref = db.reference('/')
@@ -36,6 +37,7 @@ def create_session(session_model):
 
 
 def create_user(user_model):
+    '''A function to create a user entry in the firebase.'''
     try:
         user = auth.create_user(
             email = user_model.email,
@@ -51,6 +53,7 @@ def create_user(user_model):
         raise ex
 
 def playlist_exists(playlist_id):
+    '''A function to check if a session exists in the firebase.'''
     ref = db.reference('sessions/{}'.format(playlist_id))
     return (ref.get() is not None)
 

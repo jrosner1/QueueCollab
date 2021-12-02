@@ -5,7 +5,7 @@ import {
     BrowserRouter as Router,
     Route,
   } from "react-router-dom";
-import LibraryRouter from '../Library/LibraryHome';
+import LibraryHome from '../Library/LibraryHome'
 import newSession from "./NewSession";
 import SpotifyLanding from './SpotifyLanding';
 function SpotifyHome(){
@@ -16,7 +16,7 @@ function SpotifyHome(){
             <div>
                 <Route exact path={ROUTES.SPOTIFY} component={SpotifyLanding}></Route>
                 <Route path={ROUTES.NEW_SESSION} component={newSession} />
-                <Route path={ROUTES.LIBRARY_HOME} component={LibraryRouter}></Route>
+                <Route path={ROUTES.LIBRARY_HOME} component={LibraryHome}></Route>
             </div>
         </Router>
 

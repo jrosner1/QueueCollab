@@ -2,6 +2,9 @@ from common.firebase_util import create_user, create_session
 import datetime as dt
 
 class UserModel:
+    '''The underlying class for a user. For use with marshalling POST requests and then
+        saving to firebase.
+    '''
     def __init__(self, display_name, email, password, phone_number):
         self.created_at = dt.datetime.now()
         self.user_name = display_name
@@ -13,6 +16,10 @@ class UserModel:
         return create_user(self)
 
 class SessionModel:
+    '''
+        The underlying class for a session. For use with marshalling POST requests and then
+        saving to firebase.
+    '''
     def __init__(self, home_user, playlist_id, session_name):
         self.created_at = dt.datetime.now()
         self.home_user = home_user

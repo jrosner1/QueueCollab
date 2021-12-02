@@ -6,6 +6,7 @@ from Models import UserModel
 
 
 class UserSchema(Schema):
+    '''A class that defines the fields that a user has for use with marshalling post requests.'''
     display_name = fields.Str()
     email = fields.Email()
     created_at = fields.DateTime(required=False)
@@ -20,6 +21,7 @@ class UserSchema(Schema):
 
 @app.route('/User', methods=['GET', 'POST'])
 def post():
+    '''A route for creation of a user.'''
     try:
         schema = UserSchema()
         user = schema.load(request.json)

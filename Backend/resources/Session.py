@@ -5,6 +5,7 @@ from marshmallow import Schema, fields, post_load, ValidationError
 from Models import SessionModel
 
 class SessionSchema(Schema):
+    '''A class to define the structure of a session for use in marshalling post requests.'''
     home_user = fields.Str()
     playlist_id = fields.Str()
     created_at = fields.DateTime(required=False)
@@ -18,6 +19,10 @@ class SessionSchema(Schema):
 
 @app.route('/Session/<playlist_id>', methods=['GET', 'POST'])
 def get_or_create_session(playlist_id):
+    '''
+        A method to confirm that a playlist exists if GET is requested, or create a new playlist if POST
+        is selected.
+    '''
     if request.method == 'GET':
         if playlist_exists(playlist_id):
             

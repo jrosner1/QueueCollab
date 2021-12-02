@@ -2,7 +2,7 @@
 from flask import session, request, redirect, jsonify
 import random as rand
 import string
-from common.spotify_util import getUserInformation, getToken
+from common.spotify_util import getUserInformation, getToken, make_get_request
 
 from api import app
 import os
@@ -11,16 +11,17 @@ import urllib
 import time
 
 SCOPE = "user-read-private"
-
 AUTHORIZE_URL = 'https://accounts.spotify.com/authorize?'
+
 def create_state_key(size):
+    '''A method to create a key to uniquely identify the state of a session'''
 	#https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
 	return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
 
-
 @app.route('/Spotify/', methods=["GET", 'POST'])
 def authorize():
+    ''' A method to return the link to '''
     if 'CLIENT_ID' in os.environ:
         client_id = os.environ['CLIENT_ID']
     else:
@@ -52,6 +53,10 @@ def authorize():
 
 @app.route('/callback/', methods=["GET", "POST"])
 def get_tokens():
+    '''
+    A function to receive the callback response from Spotify,
+    and set the necessary session information in order to access user Spotify info.
+     '''
     if request.json['state'] != session['state_key']:
         #TODO consider returning error template when this sort of thing fails like this example
         #https://github.com/lucaoh21/Spotify-Discover-2.0/blob/master/routes.py
@@ -78,6 +83,11 @@ def get_tokens():
 
     return "Successfully logged in", 200
 
+@app.route('/spotify-profile/', methods=['GET'])
+def get_user_info():
+    '''An endpoint to get the base user information from Spotify.'''
+    response = make_get_request(session, 'https://api.spotify.com/v1/me')
+    return response, 200
 
         
 
